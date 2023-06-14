@@ -1,0 +1,3 @@
+﻿  main.c
+C:\Users\solidus66\OneDrive\paod\paod5\main.c(7,11): warning C4244: функция: преобразование "time_t" в "unsigned int", возможна потеря данных
+  paod5.vcxproj -> C:\Users\solidus66\OneDrive\paod\paod5\Debug\paod5.exe
