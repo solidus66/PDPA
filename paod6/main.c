@@ -43,15 +43,14 @@ int main(int argc, char* argv[]) {
     int rows_remaining = M % numprocs;
 
     int local_rows = (rank < rows_remaining) ? rows_per_process + 1 : rows_per_process;
-    int local_start_row = rank * rows_per_process + ((rank < rows_remaining) ? rank : rows_remaining);
-    int local_end_row = local_start_row + local_rows;
+    int local_size = local_rows * N;
+    local_func = (double*)malloc(local_size * sizeof(double));
 
-    for (int i = local_start_row; i < local_end_row; i++) {
-        for (int j = 0; j < N; j++) {
-            local_func[j] = table[i][j];
-        }
+    MPI_Scatter(table, local_size, MPI_DOUBLE, local_func, local_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-        local_result += integrate(local_func, N, h);
+    for (int i = 0; i < local_rows; i++) {
+        double* current_row = local_func + i * N;
+        local_result += integrate(current_row, N, h);
     }
 
     MPI_Reduce(&local_result, &global_result, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
